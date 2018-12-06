@@ -1,0 +1,16 @@
+﻿@using EPiServer.Integration.Client.Models.Catalog
+@using Service_api_mvc_client.Models.ViewModels
+@model EntryViewModel
+
+@{
+    ViewBag.Title = "SingleEntry";
+}
+
+<h2>Single Entry</h2>
+<div>Code: @Model.SelectedEntry.Code</div>
+<div>Name: @Model.SelectedEntry.Name</div>
+@foreach(var price in Model.Prices)
+{
+    <div>@price.UnitPrice</div>
+    <div>@price.CurrencyCode</div>
+}
