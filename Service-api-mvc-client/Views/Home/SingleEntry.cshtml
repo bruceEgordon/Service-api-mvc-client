@@ -31,3 +31,20 @@
         }
     </tbody>
 </table>
+<div>
+    <h6>MetaField Data</h6>
+    <ul>
+        @foreach(var prop in Model.SelectedEntry.MetaFields)
+        {
+            <li>
+                @prop.Name
+                <ul>
+                    @foreach(var data in prop.Data)
+                    {
+                        <li>@data.Value (@data.Language)</li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+</div>
