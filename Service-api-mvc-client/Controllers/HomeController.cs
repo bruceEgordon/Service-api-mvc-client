@@ -52,7 +52,6 @@ namespace Service_api_mvc_client.Controllers
             HttpClient client = GetHttpClient();
 
             var result = client.GetAsync($"/episerverapi/commerce/entries/{Code}").Result.Content.ReadAsStringAsync().Result;
-
             viewModel.SelectedEntry = JsonConvert.DeserializeObject<Entry>(result);
 
             var priceResult = client.GetAsync($"/episerverapi/commerce/entries/{Code}/prices").Result.Content.ReadAsStringAsync().Result;
