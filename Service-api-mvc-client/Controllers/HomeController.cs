@@ -59,5 +59,12 @@ namespace Service_api_mvc_client.Controllers
 
             return View(viewModel);
         }
+
+        public ActionResult CreateEntry()
+        {
+            var entry = new Entry();
+
+            return View(entry);
+        }
     }
 }

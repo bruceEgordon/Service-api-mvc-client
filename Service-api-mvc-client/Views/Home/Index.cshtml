@@ -6,6 +6,9 @@
 
 <h2>Entries List using Service API</h2>
 <p>The total number of Entries: @Model.TotalCount</p>
+<div class="mb-4">
+    @Html.ActionLink("Create New Entry", "CreateEntry", null, new { @class = "btn btn-primary" })
+</div>
 <table class="table">
     <thead>
         <tr>
