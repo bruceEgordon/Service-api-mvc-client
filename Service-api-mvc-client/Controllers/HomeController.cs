@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -57,14 +58,96 @@ namespace Service_api_mvc_client.Controllers
             var priceResult = client.GetAsync($"/episerverapi/commerce/entries/{Code}/prices").Result.Content.ReadAsStringAsync().Result;
             viewModel.Prices = JsonConvert.DeserializeObject<IEnumerable<Price>>(priceResult);
 
+            var nodesResult = client.GetAsync("/episerverapi/commerce/catalog/Fashion/nodes").Result.Content.ReadAsStringAsync().Result;
+            viewModel.Nodes = JsonConvert.DeserializeObject<IEnumerable<Node>>(nodesResult);
+
             return View(viewModel);
         }
 
         public ActionResult CreateEntry()
         {
-            var entry = new Entry();
-
+            var entry = new Entry()
+            {
+                Catalog = "Fashion",
+                EntryType = "Variation",
+                MetaClass = "Shirt_Variation",
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddDays(100),
+                IsActive = true,
+                Variation = new VariationProperties
+                {
+                    MaxQuantity = 100,
+                    MinQuantity = 0,
+                    TaxCategory = "VAT",
+                    Weight = 5
+                },
+                Size = "M",
+                Color = "Blue",
+                Brand = "Acme",
+                CanBeMonogrammed = false
+            };
             return View(entry);
+        }
+
+        public ActionResult SubmitEntry(Entry entry)
+        {
+            entry.MetaFields.Add(new MetaFieldProperty()
+            {
+                Name = "Brand",
+                Type = "ShortString",
+                Data = new List<MetaFieldData>()
+                {
+                    new MetaFieldData()
+                    {
+                        Language = "en",
+                        Value = entry.Brand
+                    }
+                }
+            });
+            entry.MetaFields.Add(new MetaFieldProperty()
+            {
+                Name = "Color",
+                Type = "ShortString",
+                Data = new List<MetaFieldData>()
+                {
+                    new MetaFieldData()
+                    {
+                        Language = "en",
+                        Value = entry.Color
+                    }
+                }
+            });
+            entry.MetaFields.Add(new MetaFieldProperty()
+            {
+                Name = "Size",
+                Type = "ShortString",
+                Data = new List<MetaFieldData>()
+                {
+                    new MetaFieldData()
+                    {
+                        Language = "en",
+                        Value = entry.Size
+                    }
+                }
+            });
+            entry.MetaFields.Add(new MetaFieldProperty()
+            {
+                Name = "CanBeMonogrammed",
+                Type = "Boolean",
+                Data = new List<MetaFieldData>()
+                {
+                    new MetaFieldData()
+                    {
+                        Language = "en",
+                        Value = entry.CanBeMonogrammed.ToString()
+                    }
+                }
+            });
+            HttpClient client = GetHttpClient();
+            string json = JsonConvert.SerializeObject(entry);
+            var result = client.PostAsync("/episerverapi/commerce/entries", new StringContent(json, Encoding.UTF8, "application/json")).Result;
+
+            return RedirectToAction("Index");
         }
     }
 }

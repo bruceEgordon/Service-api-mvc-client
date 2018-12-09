@@ -1,4 +1,5 @@
-﻿@using Service_api_mvc_client.Models.ViewModels
+﻿@using EPiServer.Integration.Client.Models
+@using Service_api_mvc_client.Models.ViewModels
 @model EntryViewModel
 
 @{
@@ -8,6 +9,24 @@
 <h2>Single Entry</h2>
 <div class="alert alert-dark"><b>Code:</b> @Model.SelectedEntry.Code</div>
 <div class="alert alert-dark"><b>Name:</b> @Model.SelectedEntry.Name</div>
+<h6>Nodes</h6>
+<ul>
+    @foreach(var node in Model.Nodes)
+    {
+        <li>@node.Code</li>
+        foreach(var childnode in node.Children)
+        {
+            <li>@childnode.Title</li>
+        }
+    }
+</ul>
+@{ 
+    void TransverseNodes(ResourceLink link)
+    {
+        
+    }
+}
+<p>Parent: @Model.SelectedEntry.ParentCatalogEntry.Title</p>
 <h6>Price</h6>
 <table class="table">
     <thead>

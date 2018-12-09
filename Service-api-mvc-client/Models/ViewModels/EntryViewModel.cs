@@ -10,5 +10,6 @@ namespace Service_api_mvc_client.Models.ViewModels
     {
         public Entry SelectedEntry { get; set; }
         public IEnumerable<Price> Prices { get; set; }
+        public IEnumerable<Node> Nodes { get; set; }
     }
 }
