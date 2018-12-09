@@ -61,10 +61,12 @@ namespace Service_api_mvc_client.Controllers
 
             var nodesResult = client.GetAsync("/episerverapi/commerce/catalog/Fashion/nodes").Result.Content.ReadAsStringAsync().Result;
             IEnumerable<Node> rootNodes = JsonConvert.DeserializeObject<IEnumerable<Node>>(nodesResult);
+
             foreach(var node in rootNodes)
             {
                 viewModel.Nodes = FlattenNodes(node, client);
             }
+
             return View(viewModel);
         }
 
@@ -75,6 +77,7 @@ namespace Service_api_mvc_client.Controllers
             {
                 var nodeResult = client.GetAsync(child.Href).Result.Content.ReadAsStringAsync().Result;
                 var childNode = JsonConvert.DeserializeObject<Node>(nodeResult);
+
                 foreach (var flattenedNode in FlattenNodes(childNode, client))
                 {
                     yield return flattenedNode;
@@ -166,6 +169,24 @@ namespace Service_api_mvc_client.Controllers
             var result = client.PostAsync("/episerverapi/commerce/entries", new StringContent(json, Encoding.UTF8, "application/json")).Result;
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult AddAssociation(string entryCode, string nodeCode)
+        {
+            var model = new NodeEntryRelation()
+            {
+                EntryCode = entryCode,
+                NodeCode = nodeCode,
+                SortOrder = 0,
+                IsPrimary = true // new in 11.2
+            };
+
+            var json = JsonConvert.SerializeObject(model);
+            HttpClient client = GetHttpClient();
+            var result = client.PostAsync($"/episerverapi/commerce/entries/{entryCode}/nodeentryrelations",
+                 new StringContent(json, Encoding.UTF8, "application/json")).Result;
+
+            return RedirectToAction("SingleEntry", "Home", new { Code = entryCode });
         }
     }
 }

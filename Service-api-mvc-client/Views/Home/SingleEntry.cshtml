@@ -9,16 +9,45 @@
 <h2>Single Entry</h2>
 <div class="alert alert-dark"><b>Code:</b> @Model.SelectedEntry.Code</div>
 <div class="alert alert-dark"><b>Name:</b> @Model.SelectedEntry.Name</div>
-<h6>Nodes</h6>
-<ul>
-    @foreach(var node in Model.Nodes)
-    {
-        <li>@node.Code</li>
-        
-    }
-</ul>
+<h6>Associated Nodes</h6>
+<table class="table ">
+    <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">HRef</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var node in Model.SelectedEntry.Nodes)
+        {
+            <tr>
+                <th scope="row">@node.Title</th>
+                <td>@node.Href</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<h6>All Nodes</h6>
+<table class="table ">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Code</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var node in Model.Nodes)
+        {
+            <tr>
+                <th scope="row">@node.Name</th>
+                <td>@node.Code</td>
+                <td>@Html.ActionLink("Add Association", "AddAssociation",
+                   new { entryCode = Model.SelectedEntry.Code, nodeCode = node.Code }, new { @class = "btn btn-primary" })</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
-<p>Parent: @Model.SelectedEntry.ParentCatalogEntry.Title</p>
 <h6>Price</h6>
 <table class="table">
     <thead>
@@ -44,12 +73,12 @@
 <div>
     <h6>MetaField Data</h6>
     <ul>
-        @foreach(var prop in Model.SelectedEntry.MetaFields)
+        @foreach (var prop in Model.SelectedEntry.MetaFields)
         {
             <li>
                 @prop.Name
                 <ul>
-                    @foreach(var data in prop.Data)
+                    @foreach (var data in prop.Data)
                     {
                         <li>@data.Value (@data.Language)</li>
                     }
