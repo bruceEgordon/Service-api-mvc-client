@@ -1,4 +1,5 @@
-﻿using EPiServer.Integration.Client.Models.Catalog;
+﻿using EPiServer.Integration.Client.Models;
+using EPiServer.Integration.Client.Models.Catalog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Service_api_mvc_client.Models.ViewModels;
@@ -59,9 +60,26 @@ namespace Service_api_mvc_client.Controllers
             viewModel.Prices = JsonConvert.DeserializeObject<IEnumerable<Price>>(priceResult);
 
             var nodesResult = client.GetAsync("/episerverapi/commerce/catalog/Fashion/nodes").Result.Content.ReadAsStringAsync().Result;
-            viewModel.Nodes = JsonConvert.DeserializeObject<IEnumerable<Node>>(nodesResult);
-
+            IEnumerable<Node> rootNodes = JsonConvert.DeserializeObject<IEnumerable<Node>>(nodesResult);
+            foreach(var node in rootNodes)
+            {
+                viewModel.Nodes = FlattenNodes(node, client);
+            }
             return View(viewModel);
+        }
+
+        private IEnumerable<Node> FlattenNodes(Node node, HttpClient client)
+        {
+            yield return node;
+            foreach(var child in node.Children)
+            {
+                var nodeResult = client.GetAsync(child.Href).Result.Content.ReadAsStringAsync().Result;
+                var childNode = JsonConvert.DeserializeObject<Node>(nodeResult);
+                foreach (var flattenedNode in FlattenNodes(childNode, client))
+                {
+                    yield return flattenedNode;
+                }
+            }
         }
 
         public ActionResult CreateEntry()

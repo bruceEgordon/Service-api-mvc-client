@@ -14,18 +14,10 @@
     @foreach(var node in Model.Nodes)
     {
         <li>@node.Code</li>
-        foreach(var childnode in node.Children)
-        {
-            <li>@childnode.Title</li>
-        }
-    }
-</ul>
-@{ 
-    void TransverseNodes(ResourceLink link)
-    {
         
     }
-}
+</ul>
+
 <p>Parent: @Model.SelectedEntry.ParentCatalogEntry.Title</p>
 <h6>Price</h6>
 <table class="table">
